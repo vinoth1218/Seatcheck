@@ -137,7 +137,7 @@ svg text{font-family:var(--sans);fill:var(--ink-2);font-size:11px}
     <h1>Seatcheck</h1>
     <p class="thesis">Run your strategy through eleven prop-firm rulebooks as the firms stated them in writing, not as their pricing pages describe them. The number that kills accounts is the daily limit measured on floating equity, and whether the floor moves.</p>
   </div>
-  <div class="stamp">rulebooks verified <b>8–13 Sep 2026</b><br>support tickets, not marketing<br>example strategy: intraday breakout, one trade a day</div>
+  <div class="stamp">rulebooks verified <b>8–13 Sep 2026</b><br>support tickets, not marketing<br>open to traders in every country except where a firm says otherwise</div>
 </header>
 
 <div class="disclose">
@@ -156,7 +156,14 @@ svg text{font-family:var(--sans);fill:var(--ink-2);font-size:11px}
     <div class="field"><label for="tails">Return shape</label><select id="tails"><option value="t5">fat tails (t, 5 df)</option><option value="n">normal</option></select></div>
     <div class="field"><label for="months">Horizon<small>months</small></label><input id="months" type="number" step="1" min="1" max="36" value="18"></div>
     <div class="field"><label for="paths">Simulated paths</label><select id="paths"><option>500</option><option selected>1000</option><option>2000</option></select></div>
-    <div class="field"><label for="fx">Rupees per dollar<small>for the ₹ column</small></label><input id="fx" type="number" step="0.5" value="83"></div>
+    <div class="field"><label for="cur">Also show amounts in<small>rate is editable</small></label><select id="cur">
+      <option value="USD|$|1">US dollar only</option><option value="EUR|&euro;|0.92">Euro</option><option value="GBP|&pound;|0.79">Pound sterling</option>
+      <option value="INR|&#8377;|83">Indian rupee</option><option value="NGN|&#8358;|1550">Nigerian naira</option><option value="ZAR|R|18.5">South African rand</option>
+      <option value="PHP|&#8369;|57">Philippine peso</option><option value="BRL|R$|5.4">Brazilian real</option><option value="EGP|E&pound;|48">Egyptian pound</option>
+      <option value="TRY|&#8378;|34">Turkish lira</option><option value="MYR|RM|4.5">Malaysian ringgit</option><option value="IDR|Rp|15800">Indonesian rupiah</option>
+      <option value="VND|&#8363;|25000">Vietnamese dong</option><option value="PKR|&#8360;|278">Pakistani rupee</option><option value="AED|AED |3.67">UAE dirham</option>
+      <option value="CAD|C$|1.36">Canadian dollar</option><option value="AUD|A$|1.52">Australian dollar</option></select></div>
+    <div class="field" id="rateRow" hidden><label for="fx">Units per US dollar<small>edit if the rate has moved</small></label><input id="fx" type="number" step="0.01" value="83"></div>
     <button class="run" id="run" type="button">Run every rulebook</button>
     <p class="note">All firms see the same random days, so the gap between rows is the rulebook alone. The zero-edge column reruns with mean return set to 0: a seat that still pays out with no edge is charging you for luck.</p>
   </aside>
@@ -179,7 +186,7 @@ svg text{font-family:var(--sans);fill:var(--ink-2);font-size:11px}
           <th data-k="cash30">Cash ≤ 30d</th>
           <th data-k="alive">Alive at end</th>
           <th data-k="net">Median net $</th>
-          <th data-k="netInr">₹</th>
+          <th data-k="netLocal" id="thLocal" hidden>local</th>
           <th data-k="mult">× fee</th>
           <th data-k="zero">Zero-edge P(win)</th>
           <th data-k="ver">Verified</th>
@@ -219,67 +226,67 @@ const FIRMS=[
 {id:'fn2',firm:'FundedNext',prod:'Stellar 2-Step · $100k',size:100000,fee:549,refund:true,
  daily:{pct:5,basis:'float',anchor:'initial'},floor:{pct:10,kind:'static'},eval:[{t:8,min:5},{t:5,min:5}],
  funded:{first:{kind:'afterDays',days:21},cycle:14,split:.8,min:20},
- rules:{consistency:'None (40% rule only if the On-Demand add-on is bought)',ea:'Yes, MT4/MT5 only, never cTrader or Match-Trader',vps:'AWS with a dedicated static IP, in writing; region need not match India',india:'Eligible; KYC by passport, DL, Aadhaar or voter ID',cap:'$300,000 ($600,000 with Double Up)',news:'Holding through news is fine; only trades executed within ±5 min of high-impact releases are penalised'},
+ rules:{consistency:'None (40% rule only if the On-Demand add-on is bought)',ea:'Yes, MT4/MT5 only, never cTrader or Match-Trader',vps:'AWS with a dedicated static IP, in writing; region need not match India',residency:'Most countries eligible. Cambodia, Mongolia, Slovakia, Slovenia, Taiwan, Ukraine, Czechia and Pakistan are capped at $50,000 total allocation. India eligible, KYC by passport, driving licence, Aadhaar or voter ID. Payouts by Rise, crypto or bank.',cap:'$300,000 ($600,000 with Double Up)',news:'Holding through news is fine; only trades executed within ±5 min of high-impact releases are penalised'},
  ver:{level:'written',date:'2026-09-13',src:'two FundedNext support agents'},
  flags:[{t:'EA Add-On for the $100k account: one agent says it is mandatory, another says it is disabled. Unresolved.',c:1},{t:'One strategy on several funded accounts "may be flagged under our copy trading rule". Unresolved.',c:1},{t:'No money before roughly day 100; this is a compounder, not a fast seat.'}]},
 {id:'fni',firm:'FundedNext',prod:'Stellar Instant · $10k',size:10000,fee:239.99,refund:false,
  daily:null,floor:{pct:6,kind:'trail'},eval:[],
  funded:{first:{kind:'demandOrCycle',pct:5,days:14},cycle:14,split:.8,min:20},
- rules:{consistency:'Not stated',ea:'Yes, with the $30 one-time EA Add-On (available up to $25k accounts), MT5 only',vps:'AWS with a dedicated static IP, confirmed',india:'Eligible',cap:'$20,000 total active across all Stellar Instant accounts',news:'As the 2-Step'},
+ rules:{consistency:'Not stated',ea:'Yes, with the $30 one-time EA Add-On (available up to $25k accounts), MT5 only',vps:'AWS with a dedicated static IP, confirmed',residency:'As the 2-Step above. Payouts by Rise, crypto or bank transfer.',cap:'$20,000 total active across all Stellar Instant accounts',news:'As the 2-Step'},
  ver:{level:'written',date:'2026-09-13',src:'FundedNext support'},
  flags:[{t:'The floor TRAILS: every new equity high tightens it. Same 6% as CTI, roughly a third fewer payouts in our runs.',c:1},{t:'Fee is not refunded on this product.'},{t:'Fee shown includes the $30 EA Add-On; without it the EA may not run.'}]},
 {id:'cti',firm:'CTI',prod:'Instant · $10k',size:10000,fee:259,refund:false,
  daily:null,floor:{pct:6,kind:'static'},eval:[],
  funded:{first:{kind:'profitAndDays',pct:2,days:5},cycle:15,split:.8,min:100},
- rules:{consistency:'None for payout; 20% consistency only to scale at 10% profit',ea:'Yes, if personally developed and you will share source code at review',vps:'Needs compliance pre-approval, only to run an EA',india:'Accepted; payout to Indian bank or USDT TRC20',cap:'Not stated for Instant; 2-Step caps at 2 × $100k',news:'"Not allowed in automated trading" but "holding through a news event is permitted"'},
+ rules:{consistency:'None for payout; 20% consistency only to scale at 10% profit',ea:'Yes, if personally developed and you will share source code at review',vps:'Needs compliance pre-approval, only to run an EA',residency:'India accepted, payout to a local bank account or USDT on TRC20 only. Other countries not asked.',cap:'Not stated for Instant; 2-Step caps at 2 × $100k',news:'"Not allowed in automated trading" but "holding through a news event is permitted"'},
  ver:{level:'written',date:'2026-09-13',src:'CTI support, tickets 132714650 / 132584861'},
  flags:[{t:'News rule contradicts itself inside one reply: the headline sentence condemns automated books, the clarification exonerates them. Get it settled before paying.',c:1},{t:'May require your EA source code at payout review.',c:1},{t:'Profit split not confirmed in writing; 80% assumed.'},{t:'Promo CHEERS15 cuts the fee 15%.'}]},
 {id:'t5',firm:'The5ers',prod:'High Stakes 2-Step · $100k',size:100000,fee:495,refund:false,
  daily:{pct:5,basis:'float',anchor:'prev'},floor:{pct:10,kind:'static'},eval:[{t:8,min:3},{t:5,min:3}],
  funded:{first:{kind:'afterDays',days:14},cycle:14,split:.8,min:150},
- rules:{consistency:'None. No minimum days, no max single-day profit, no profitable-day minimum',ea:'"EAs are permitted, including on the funded account. Your own EA is fine." Banned: arbitrage, HFT, emulators, signal copying',vps:'Permitted; server location need not match your country',india:'Accepted; Rise, crypto, bank, HUB credits',cap:'Not yet answered',news:'Not asked'},
+ rules:{consistency:'None. No minimum days, no max single-day profit, no profitable-day minimum',ea:'"EAs are permitted, including on the funded account. Your own EA is fine." Banned: arbitrage, HFT, emulators, signal copying',vps:'Permitted; server location need not match your country',residency:'Accepted, India confirmed. Payouts by Rise, direct crypto, bank transfer or HUB credits.',cap:'Not yet answered',news:'Not asked'},
  ver:{level:'written',date:'2026-09-13',src:'Five Percent Online LTD, ticket MEWIGL'},
  flags:[{t:'Cleanest rulebook on the board and no discretionary risk-limitation clause volunteered. Confirm that absence directly before buying.'},{t:'Allocation cap unanswered.'},{t:'Fee is the list price, not a support-confirmed figure.'}]},
 {id:'bf',firm:'BrightFunded',prod:'2-Step Classic · $100k',size:100000,fee:540,refund:false,bonus:.15,
  daily:{pct:5,basis:'float',anchor:'prev'},floor:{pct:10,kind:'static'},eval:[{t:10,min:5},{t:5,min:5}],
  funded:{first:{kind:'afterDays',days:30},cycle:14,split:.8,min:50},
- rules:{consistency:'None; minimum 5 trading days, trades must stay open 60 s',ea:'"EA is allowed across all stages (both evaluation, funded)"',vps:'VPN/VPS permitted; owner must operate the account',india:'Accepted; USDC ERC-20 or EUR bank',cap:'Not asked',news:'Not asked'},
+ rules:{consistency:'None; minimum 5 trading days, trades must stay open 60 s',ea:'"EA is allowed across all stages (both evaluation, funded)"',vps:'VPN/VPS permitted; owner must operate the account',residency:'Restricted list is Cuba, Iran, North Korea, Syria, Vietnam and Pakistan only. Everywhere else accepted, India confirmed. Payouts in USDC on ERC-20 or by EUR bank transfer.',cap:'Not asked',news:'Not asked'},
  ver:{level:'written',date:'2026-09-12',src:'two BrightFunded support agents'},
  flags:[{t:'Their Risk Department "may determine that your funded account is subject to... a daily limit restriction" after you have paid and passed. Confirmed in writing. A 1% cap makes this seat worth $0 in our model.',c:1},{t:'Multiple funded holders report an undisclosed 1% daily cap.',c:1},{t:'Reports of 200-pip slippage.'},{t:'Flags negative Trustpilot reviews as fraudulent, inflating the visible score.'},{t:'15% of evaluation profit is added to the funded starting balance (modelled).'}]},
 {id:'fp',firm:'FundingPips',prod:'2-Step Standard · $100k',size:100000,fee:499,refund:false,
  daily:{pct:5,basis:'float',anchor:'prev'},floor:{pct:10,kind:'static'},eval:[{t:8,min:3},{t:5,min:3}],
  funded:{first:{kind:'afterDays',days:14},cycle:14,split:.8,min:50},
- rules:{consistency:'None recorded',ea:'Own EA with proof of ownership',vps:'BANNED. Home PC only',india:'Accepted',cap:'$400,000, confirmed',news:'Not recorded'},
+ rules:{consistency:'None recorded',ea:'Own EA with proof of ownership',vps:'BANNED. Home PC only',residency:'Accepted, India confirmed. Other countries not asked.',cap:'$400,000, confirmed',news:'Not recorded'},
  ver:{level:'partial',date:'2026-09-13',src:'FundingPips support on the cap; other rules from the help centre'},
- flags:[{t:'VPS banned: the machine must be awake 18:50–23:30 IST every weekday. Costs under 4% at 97–99% uptime.'},{t:'Payout timing not confirmed in writing; 14-day cycle assumed.'}]},
+ flags:[{t:'VPS banned: the machine must be awake 18:50–23:30 IST every weekday. The US cash session is the middle of the night across Asia and the evening in Europe, so the machine has to be awake then. Costs under 4% at 97-99% uptime.'},{t:'Payout timing not confirmed in writing; 14-day cycle assumed.'}]},
 {id:'ee',firm:'Equity Edge',prod:'2-Step Legacy · $100k',size:100000,fee:500,refund:false,eaBan:true,
  daily:{pct:5,basis:'float',anchor:'prev'},floor:{pct:10,kind:'static'},eval:[{t:8,min:5},{t:5,min:5}],
  funded:{first:{kind:'afterDays',days:14},cycle:14,split:.8,min:125},
- rules:{consistency:'None on the funded account',ea:'PROHIBITED. Asked point blank whether a self-written, fully automated EA is permitted on the challenge and the funded account: "No please, this is not permitted."',vps:'Permitted',india:'Accepted, UPI payments',cap:'$200,000 total, confirmed in writing (counts passed challenges awaiting contracts)',news:'Bans opening/closing within 2 min of high-impact events only'},
+ rules:{consistency:'None on the funded account',ea:'PROHIBITED. Asked point blank whether a self-written, fully automated EA is permitted on the challenge and the funded account: "No please, this is not permitted."',vps:'Permitted',residency:'Accepted. India confirmed, with UPI available as a payment method.',cap:'$200,000 total, confirmed in writing (counts passed challenges awaiting contracts)',news:'Bans opening/closing within 2 min of high-impact events only'},
  ver:{level:'written',date:'2026-09-13',src:'Equity Edge support'},
  flags:[{t:'FULLY AUTOMATED EAs ARE PROHIBITED. If your strategy places its own orders, this seat is unusable no matter how good the rest of the rulebook is. Everything below is recorded only because the other rules are genuinely strong.',c:1},{t:'A stop loss or take profit that TRIGGERS inside the 2-minute window around high-impact news counts as closing a trade in the restricted window, per their own wording. Confirmation requested.',c:1},{t:'Fee and targets not recorded; edit the fee. Targets assumed 8% / 5%.'},{t:'$200k allocation cap is the lowest found.'}]},
 {id:'ftp',firm:'Funded Trading Plus',prod:'Instant · $100k',size:100000,fee:1059,refund:false,
  daily:{pct:6,basis:'float',anchor:'prev'},floor:{pct:6,kind:'lock',lockAt:0},eval:[],
  funded:{first:{kind:'afterDays',days:1},cycle:7,split:.8,min:50},
- rules:{consistency:'None ("does not currently have a 50% consistency rule")',ea:'EAs, automated trading, VPS and VPN all permitted',vps:'Permitted',india:'Accepted; ERC-20, USDC, Rise',cap:'No hard limit on the number of Instant accounts',news:'No rule against directional or correlated exposure'},
+ rules:{consistency:'None ("does not currently have a 50% consistency rule")',ea:'EAs, automated trading, VPS and VPN all permitted',vps:'Permitted',residency:'Accepted, India confirmed. Payouts in USDC or ERC-20 crypto, or by Rise.',cap:'No hard limit on the number of Instant accounts',news:'No rule against directional or correlated exposure'},
  ver:{level:'written',date:'2026-09-08',src:'FTP support, tickets 333682 / 333696'},
  flags:[{t:'Floor trails until +6%, then locks at breakeven. The first weeks are the fragile part.'},{t:'Several accounts on one strategy is size, not diversification: they all breach on the same day (confirmed).'},{t:'No weekend holding; flat by 16:30 EST Friday.'}]},
 {id:'fin',firm:'Finotive',prod:'Instant Standard · $100k',size:100000,fee:3764,refund:false,
  daily:{pct:3.5,basis:'float',anchor:'prev'},floor:{pct:7,kind:'static'},eval:[],
  funded:{first:{kind:'afterDays',days:1},cycle:7,split:.75,min:50},
- rules:{consistency:'60% per TRADE (barely binds a one-trade-a-day book)',ea:'Permitted',vps:'"IP region needs to be consistent; masking via VPS can trigger compliance review"',india:'Accepted',cap:'Not recorded',news:'Not recorded'},
+ rules:{consistency:'60% per TRADE (barely binds a one-trade-a-day book)',ea:'Permitted',vps:'"IP region needs to be consistent; masking via VPS can trigger compliance review"',residency:'Accepted, India confirmed. Other countries not asked.',cap:'Not recorded',news:'Not recorded'},
  ver:{level:'written',date:'2026-09-09',src:'Finotive support'},
  flags:[{t:'Fee is 3.55% of the account, five times FTP\'s ratio. The best structure tested, killed by price.'},{t:'3.5% daily against an example p99 excursion of 3.5%.'}]},
 {id:'fyfx',firm:'FundYourFX',prod:'Instant · $200k',size:200000,fee:1193,refund:false,
  daily:{pct:4,basis:'float',anchor:'prev'},floor:{pct:6,kind:'static'},eval:[],
  funded:{first:{kind:'afterDays',days:7},cycle:7,split:.8,min:50},
- rules:{consistency:'None',ea:'Permitted',vps:'Not recorded',india:'Accepted',cap:'Not recorded',news:'Not recorded'},
+ rules:{consistency:'None',ea:'Permitted',vps:'Not recorded',residency:'Accepted, India confirmed. Other countries not asked.',cap:'Not recorded',news:'Not recorded'},
  ver:{level:'partial',date:'2026-09-09',src:'FundYourFX support; floor type unconfirmed'},
  flags:[{t:'Unpaid UK County Court Judgment (M12ZA598), now at High Court enforcement.',c:1},{t:'Floor type not confirmed; static assumed.'}]},
 {id:'tr',firm:'Tradeify',prod:'Lightning Futures · $150k',size:150000,fee:529,refund:false,
  daily:{pct:2,basis:'closed',anchor:'prev'},floor:{pct:3.5,kind:'lock',lockAt:100/150000},eval:[],
  funded:{first:{kind:'gate',usd:9000,firstCap:3000},cycle:14,split:.8,min:50},
- rules:{consistency:'20 / 25 / 30% DAILY consistency. Not scored here; a one-trade-a-day book breaks it in most windows',ea:'Unconfirmed',vps:'Unconfirmed',india:'Unconfirmed',cap:'Not recorded',news:'Not recorded'},
+ rules:{consistency:'20 / 25 / 30% DAILY consistency. Not scored here; a one-trade-a-day book breaks it in most windows',ea:'Unconfirmed',vps:'Unconfirmed',residency:'Unconfirmed',cap:'Not recorded',news:'Not recorded'},
  ver:{level:'none',date:'2026-09-10',src:'Pricing page only'},
  flags:[{t:'$9,000 profit gate before any payout; first payout capped at $3,000.',c:1},{t:'Daily consistency rule not modelled; expect fewer payouts than shown.',c:1},{t:'Automation and India both unconfirmed.'}]}
 ];
@@ -372,12 +379,12 @@ let runId=0;
 function run(){
   const id=++runId;const btn=$('run');btn.disabled=true;
   const mu=+$('mu').value/1e4,sd=+$('sd').value/1e4,dip=+$('dip').value/100,lev=+$('lev').value||1;
-  const months=Math.max(1,Math.min(36,+$('months').value||12)),D=Math.round(months*21),P=+$('paths').value,fx=+$('fx').value||83,shape=$('tails').value;
+  const months=Math.max(1,Math.min(36,+$('months').value||12)),D=Math.round(months*21),P=+$('paths').value,shape=$('tails').value;const fx=curNow().rate;
   const days=buildDays(P,D,shape);const s=calibrateDip(days.z,days.e,mu,sd,dip);
   const out=[];let i=0;
   const step=()=>{if(id!==runId)return;
     const f=FIRMS[i];const fee=fees[f.id];const m=simulate(f,days,P,D,mu,sd,s,lev,fee);const zc=simulate(f,days,P,D,0,sd,s,lev,fee);
-    out.push({f,fee,...m,mult:m.cash/fee,zero:zc.pWin,netInr:m.net*fx,daily:f.daily?f.daily.pct:99,floor:f.floor.pct,ver:{written:3,partial:2,none:1}[f.ver.level]});
+    out.push({f,fee,...m,mult:m.cash/fee,zero:zc.pWin,netLocal:m.net*fx,daily:f.daily?f.daily.pct:99,floor:f.floor.pct,ver:{written:3,partial:2,none:1}[f.ver.level]});
     btn.textContent=`Running ${i+1} of ${FIRMS.length}…`;i++;
     if(i<FIRMS.length){setTimeout(step,0);return}
     rows=out;if(!shown.size){[...rows].sort((a,b)=>b.net-a.net).slice(0,5).forEach(r=>shown.add(r.f.id))}
@@ -385,7 +392,12 @@ function run(){
   setTimeout(step,0);
 }
 const fmt$=v=>isNaN(v)?'—':(v<0?'−':'')+'$'+Math.abs(Math.round(v)).toLocaleString('en-US');
-const fmtI=v=>isNaN(v)?'—':(v<0?'−':'')+'₹'+Math.abs(Math.round(v)).toLocaleString('en-IN');
+let CUR={code:'USD',sym:'$',rate:1};
+function curNow(){const p=($('cur').value||'USD|$|1').split('|');const code=p[0],sym=p[1],rate=+p[2];
+  const isUSD=code==='USD';$('rateRow').hidden=isUSD;$('thLocal').hidden=isUSD;
+  if(code!==CUR.code)$('fx').value=rate;
+  CUR={code,sym,rate:isUSD?1:(+$('fx').value||rate)};return CUR}
+const fmtL=v=>isNaN(v)?'—':(v<0?'−':'')+CUR.sym+Math.abs(Math.round(v)).toLocaleString(CUR.code==='INR'?'en-IN':'en-US');
 const pct=v=>isNaN(v)?'—':Math.round(v*100)+'%';
 
 function renderStats(fx){
@@ -408,7 +420,7 @@ function renderTable(fx){
     tr.innerHTML=`<td class="l"><span class="firm">${f.firm}</span>${f.eaBan?'<span class="chip ban">EA banned</span>':''}<span class="prod">${f.prod}</span></td>
       <td><input class="fee" type="number" step="1" min="1" value="${r.fee}" data-id="${f.id}" aria-label="fee for ${f.firm} ${f.prod}"></td>
       <td>${dailyTxt}</td><td>${floorTxt}</td><td>${fundedTxt}</td><td>${pct(r.cash30)}</td><td>${pct(r.alive)}</td>
-      <td class="${r.net<0?'neg':'pos'}">${fmt$(r.net)}</td><td class="${r.net<0?'neg':''}">${fmtI(r.netInr)}</td><td>${r.mult.toFixed(2)}×</td><td>${pct(r.zero)}</td>
+      <td class="${r.net<0?'neg':'pos'}">${fmt$(r.net)}</td>${CUR.code==='USD'?'':'<td class="'+(r.net<0?'neg':'')+'">'+fmtL(r.netLocal)+'</td>'}<td>${r.mult.toFixed(2)}×</td><td>${pct(r.zero)}</td>
       <td><span class="chip ${f.ver.level}">${f.ver.level==='written'?'in writing':f.ver.level==='partial'?'partial':'unverified'}</span></td>`;
     tb.appendChild(tr);
     if(openId===f.id){const sh=document.createElement('tr');sh.className='sheet';sh.innerHTML=`<td colspan="12"><div class="sheet">
@@ -421,7 +433,7 @@ function renderTable(fx){
         ${kv('Consistency',f.rules.consistency)}
         ${kv('Automation',f.rules.ea)}
         ${kv('Hosting',f.rules.vps)}
-        ${kv('India',f.rules.india)}
+        ${kv('Residency and payouts',f.rules.residency)}
         ${kv('Allocation cap',f.rules.cap)}
         ${kv('News',f.rules.news)}
         ${kv('Median payouts in run',isNaN(r.pay)?'—':r.pay)}
@@ -475,14 +487,15 @@ function renderBars(fx){
     g+=`<text x="${r.net>=0?x1+6:x1-6}" y="${y+14}" text-anchor="${r.net>=0?'start':'end'}">${fmt$(r.net)}</text>`});
   $('bars').innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="median net outcome by seat">${g}</svg>`;
   $('bars').querySelectorAll('.bar').forEach(b=>{b.addEventListener('mousemove',ev=>{const r=data[+b.dataset.i];
-    showTT(`<b>${r.f.firm}</b> ${r.f.prod}<div class="r"><span>median net</span><span>${fmt$(r.net)} · ${fmtI(r.netInr)}</span></div><div class="r"><span>P(net &gt; 0)</span><span>${pct(r.pWin)}</span></div><div class="r"><span>median payouts</span><span>${isNaN(r.pay)?'—':r.pay}</span></div><div class="r"><span>fee</span><span>${fmt$(r.fee)}</span></div>`,ev.clientX,ev.clientY)});b.addEventListener('mouseleave',hideTT)});
+    showTT(`<b>${r.f.firm}</b> ${r.f.prod}<div class="r"><span>median net</span><span>${fmt$(r.net)}${CUR.code==='USD'?'':' · '+fmtL(r.netLocal)}</span></div><div class="r"><span>P(net &gt; 0)</span><span>${pct(r.pWin)}</span></div><div class="r"><span>median payouts</span><span>${isNaN(r.pay)?'—':r.pay}</span></div><div class="r"><span>fee</span><span>${fmt$(r.fee)}</span></div>`,ev.clientX,ev.clientY)});b.addEventListener('mouseleave',hideTT)});
 }
 
 // ---------- wiring ----------
 $('run').addEventListener('click',run);
-document.querySelectorAll('th[data-k]').forEach(th=>{th.tabIndex=0;const go=()=>{const k=th.dataset.k;if(sortKey===k)sortDir*=-1;else{sortKey=k;sortDir=k==='firm'?1:-1}renderTable(+$('fx').value||83)};th.addEventListener('click',go);th.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}})});
-$('tb').addEventListener('click',ev=>{if(ev.target.closest('input'))return;const tr=ev.target.closest('tr.row');if(!tr)return;openId=openId===tr.dataset.id?null:tr.dataset.id;renderTable(+$('fx').value||83)});
+document.querySelectorAll('th[data-k]').forEach(th=>{th.tabIndex=0;const go=()=>{const k=th.dataset.k;if(sortKey===k)sortDir*=-1;else{sortKey=k;sortDir=k==='firm'?1:-1}renderTable(CUR.rate)};th.addEventListener('click',go);th.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}})});
+$('tb').addEventListener('click',ev=>{if(ev.target.closest('input'))return;const tr=ev.target.closest('tr.row');if(!tr)return;openId=openId===tr.dataset.id?null:tr.dataset.id;renderTable(CUR.rate)});
 $('tb').addEventListener('change',ev=>{const inp=ev.target.closest('input.fee');if(!inp)return;fees[inp.dataset.id]=Math.max(1,+inp.value||1);run()});
+$('cur').addEventListener('change',run);$('fx').addEventListener('change',run);
 ['mu','sd','dip','lev','months','fx'].forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='Enter')run()}));
 run();
 </script>
