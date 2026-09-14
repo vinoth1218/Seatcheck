@@ -205,6 +205,7 @@ svg text{font-family:var(--sans);fill:var(--ink-2);font-size:11px}
       <p><b>How it is scored.</b> Each path draws one closed return and one intraday low per trading day. Daily limits are tested against the intraday low when the firm measures floating equity, against the close when it measures closed balance. Static floors sit at the starting balance; trailing floors follow the equity high; locked floors follow it until they reach breakeven and stop. Evaluations pass on target and minimum days, then the funded stage pays on the firm's stated first-payout rule and cycle. Consistency rules are shown but not scored.</p>
       <p class="who"><b>A firm saying no is a result.</b> Equity Edge answered that fully automated Expert Advisors are not permitted, which rules them out for anyone whose system places its own orders, however strong the rest of their rulebook is. That answer stays on the board rather than being deleted, because knowing a seat is closed is worth as much as knowing one is open.</p>
       <p><b>Adding a firm.</b> Every rule here came from a support ticket, not a pricing page. Name a firm that is missing and it gets the same six questions: whether the daily limit is measured on floating equity or closed balance, whether the floor trails or stays static, whether EAs are permitted on the funded account rather than only the evaluation, whether a VPS is allowed, what the consistency rule is, and the total allocation cap. The reply gets published here whatever it says.</p>
+      <p class="who"><b>If you are one of these firms.</b> Every quote here is from your own support desk answering a pre-purchase question, reproduced as written and dated. Nothing is paraphrased to make a point. If a rule has changed, or a quote is wrong or out of date, say so and the correction is published the same day, with equal prominence, regardless of what it does to your ranking. Individual support staff are not named.</p>
       <p><b>What it is not.</b> A guarantee of anything. Rules are a snapshot from support replies on the dates shown, and firms change them, apply unpublished ones, and die. Fees are editable because list prices move weekly.</p>
     </div>
   </section>
@@ -219,19 +220,19 @@ const FIRMS=[
  daily:{pct:5,basis:'float',anchor:'initial'},floor:{pct:10,kind:'static'},eval:[{t:8,min:5},{t:5,min:5}],
  funded:{first:{kind:'afterDays',days:21},cycle:14,split:.8,min:20},
  rules:{consistency:'None (40% rule only if the On-Demand add-on is bought)',ea:'Yes, MT4/MT5 only, never cTrader or Match-Trader',vps:'AWS with a dedicated static IP, in writing; region need not match India',india:'Eligible; KYC by passport, DL, Aadhaar or voter ID',cap:'$300,000 ($600,000 with Double Up)',news:'Holding through news is fine; only trades executed within ±5 min of high-impact releases are penalised'},
- ver:{level:'written',date:'2026-09-13',src:'Zoe and Ben Clark, FundedNext support'},
+ ver:{level:'written',date:'2026-09-13',src:'two FundedNext support agents'},
  flags:[{t:'EA Add-On for the $100k account: one agent says it is mandatory, another says it is disabled. Unresolved.',c:1},{t:'One strategy on several funded accounts "may be flagged under our copy trading rule". Unresolved.',c:1},{t:'No money before roughly day 100; this is a compounder, not a fast seat.'}]},
 {id:'fni',firm:'FundedNext',prod:'Stellar Instant · $10k',size:10000,fee:239.99,refund:false,
  daily:null,floor:{pct:6,kind:'trail'},eval:[],
  funded:{first:{kind:'demandOrCycle',pct:5,days:14},cycle:14,split:.8,min:20},
  rules:{consistency:'Not stated',ea:'Yes, with the $30 one-time EA Add-On (available up to $25k accounts), MT5 only',vps:'AWS with a dedicated static IP, confirmed',india:'Eligible',cap:'$20,000 total active across all Stellar Instant accounts',news:'As the 2-Step'},
- ver:{level:'written',date:'2026-09-13',src:'Ben Clark, FundedNext support'},
+ ver:{level:'written',date:'2026-09-13',src:'FundedNext support'},
  flags:[{t:'The floor TRAILS: every new equity high tightens it. Same 6% as CTI, roughly a third fewer payouts in our runs.',c:1},{t:'Fee is not refunded on this product.'},{t:'Fee shown includes the $30 EA Add-On; without it the EA may not run.'}]},
 {id:'cti',firm:'CTI',prod:'Instant · $10k',size:10000,fee:259,refund:false,
  daily:null,floor:{pct:6,kind:'static'},eval:[],
  funded:{first:{kind:'profitAndDays',pct:2,days:5},cycle:15,split:.8,min:100},
  rules:{consistency:'None for payout; 20% consistency only to scale at 10% profit',ea:'Yes, if personally developed and you will share source code at review',vps:'Needs compliance pre-approval, only to run an EA',india:'Accepted; payout to Indian bank or USDT TRC20',cap:'Not stated for Instant; 2-Step caps at 2 × $100k',news:'"Not allowed in automated trading" but "holding through a news event is permitted"'},
- ver:{level:'written',date:'2026-09-13',src:'Shimaa, CTI support, tickets 132714650 / 132584861'},
+ ver:{level:'written',date:'2026-09-13',src:'CTI support, tickets 132714650 / 132584861'},
  flags:[{t:'News rule contradicts itself inside one reply: the headline sentence condemns automated books, the clarification exonerates them. Get it settled before paying.',c:1},{t:'May require your EA source code at payout review.',c:1},{t:'Profit split not confirmed in writing; 80% assumed.'},{t:'Promo CHEERS15 cuts the fee 15%.'}]},
 {id:'t5',firm:'The5ers',prod:'High Stakes 2-Step · $100k',size:100000,fee:495,refund:false,
  daily:{pct:5,basis:'float',anchor:'prev'},floor:{pct:10,kind:'static'},eval:[{t:8,min:3},{t:5,min:3}],
@@ -243,19 +244,19 @@ const FIRMS=[
  daily:{pct:5,basis:'float',anchor:'prev'},floor:{pct:10,kind:'static'},eval:[{t:10,min:5},{t:5,min:5}],
  funded:{first:{kind:'afterDays',days:30},cycle:14,split:.8,min:50},
  rules:{consistency:'None; minimum 5 trading days, trades must stay open 60 s',ea:'"EA is allowed across all stages (both evaluation, funded)"',vps:'VPN/VPS permitted; owner must operate the account',india:'Accepted; USDC ERC-20 or EUR bank',cap:'Not asked',news:'Not asked'},
- ver:{level:'written',date:'2026-09-12',src:'Suresh and Isaac, BrightFunded support'},
+ ver:{level:'written',date:'2026-09-12',src:'two BrightFunded support agents'},
  flags:[{t:'Their Risk Department "may determine that your funded account is subject to... a daily limit restriction" after you have paid and passed. Confirmed in writing. A 1% cap makes this seat worth $0 in our model.',c:1},{t:'Multiple funded holders report an undisclosed 1% daily cap.',c:1},{t:'Reports of 200-pip slippage.'},{t:'Flags negative Trustpilot reviews as fraudulent, inflating the visible score.'},{t:'15% of evaluation profit is added to the funded starting balance (modelled).'}]},
 {id:'fp',firm:'FundingPips',prod:'2-Step Standard · $100k',size:100000,fee:499,refund:false,
  daily:{pct:5,basis:'float',anchor:'prev'},floor:{pct:10,kind:'static'},eval:[{t:8,min:3},{t:5,min:3}],
  funded:{first:{kind:'afterDays',days:14},cycle:14,split:.8,min:50},
  rules:{consistency:'None recorded',ea:'Own EA with proof of ownership',vps:'BANNED. Home PC only',india:'Accepted',cap:'$400,000, confirmed',news:'Not recorded'},
- ver:{level:'partial',date:'2026-09-13',src:'F. Babar on the cap; other rules from the help centre'},
+ ver:{level:'partial',date:'2026-09-13',src:'FundingPips support on the cap; other rules from the help centre'},
  flags:[{t:'VPS banned: the machine must be awake 18:50–23:30 IST every weekday. Costs under 4% at 97–99% uptime.'},{t:'Payout timing not confirmed in writing; 14-day cycle assumed.'}]},
 {id:'ee',firm:'Equity Edge',prod:'2-Step Legacy · $100k',size:100000,fee:500,refund:false,eaBan:true,
  daily:{pct:5,basis:'float',anchor:'prev'},floor:{pct:10,kind:'static'},eval:[{t:8,min:5},{t:5,min:5}],
  funded:{first:{kind:'afterDays',days:14},cycle:14,split:.8,min:125},
  rules:{consistency:'None on the funded account',ea:'PROHIBITED. Asked point blank whether a self-written, fully automated EA is permitted on the challenge and the funded account: "No please, this is not permitted."',vps:'Permitted',india:'Accepted, UPI payments',cap:'$200,000 total, confirmed in writing (counts passed challenges awaiting contracts)',news:'Bans opening/closing within 2 min of high-impact events only'},
- ver:{level:'written',date:'2026-09-13',src:'Rehoboth, Equity Edge support'},
+ ver:{level:'written',date:'2026-09-13',src:'Equity Edge support'},
  flags:[{t:'FULLY AUTOMATED EAs ARE PROHIBITED. If your strategy places its own orders, this seat is unusable no matter how good the rest of the rulebook is. Everything below is recorded only because the other rules are genuinely strong.',c:1},{t:'A stop loss or take profit that TRIGGERS inside the 2-minute window around high-impact news counts as closing a trade in the restricted window, per their own wording. Confirmation requested.',c:1},{t:'Fee and targets not recorded; edit the fee. Targets assumed 8% / 5%.'},{t:'$200k allocation cap is the lowest found.'}]},
 {id:'ftp',firm:'Funded Trading Plus',prod:'Instant · $100k',size:100000,fee:1059,refund:false,
  daily:{pct:6,basis:'float',anchor:'prev'},floor:{pct:6,kind:'lock',lockAt:0},eval:[],
