@@ -203,7 +203,8 @@ svg text{font-family:var(--sans);fill:var(--ink-2);font-size:11px}
 
     <div class="foot">
       <p><b>How it is scored.</b> Each path draws one closed return and one intraday low per trading day. Daily limits are tested against the intraday low when the firm measures floating equity, against the close when it measures closed balance. Static floors sit at the starting balance; trailing floors follow the equity high; locked floors follow it until they reach breakeven and stop. Evaluations pass on target and minimum days, then the funded stage pays on the firm's stated first-payout rule and cycle. Consistency rules are shown but not scored.</p>
-      <p class="who"><b>Adding a firm.</b> Every rule here came from a support ticket, not a pricing page. Name a firm that is missing and it gets the same six questions: whether the daily limit is measured on floating equity or closed balance, whether the floor trails or stays static, whether EAs are permitted on the funded account rather than only the evaluation, whether a VPS is allowed, what the consistency rule is, and the total allocation cap. The reply gets published here whatever it says.</p>
+      <p class="who"><b>A firm saying no is a result.</b> Equity Edge answered that fully automated Expert Advisors are not permitted, which rules them out for anyone whose system places its own orders, however strong the rest of their rulebook is. That answer stays on the board rather than being deleted, because knowing a seat is closed is worth as much as knowing one is open.</p>
+      <p><b>Adding a firm.</b> Every rule here came from a support ticket, not a pricing page. Name a firm that is missing and it gets the same six questions: whether the daily limit is measured on floating equity or closed balance, whether the floor trails or stays static, whether EAs are permitted on the funded account rather than only the evaluation, whether a VPS is allowed, what the consistency rule is, and the total allocation cap. The reply gets published here whatever it says.</p>
       <p><b>What it is not.</b> A guarantee of anything. Rules are a snapshot from support replies on the dates shown, and firms change them, apply unpublished ones, and die. Fees are editable because list prices move weekly.</p>
     </div>
   </section>
@@ -250,12 +251,12 @@ const FIRMS=[
  rules:{consistency:'None recorded',ea:'Own EA with proof of ownership',vps:'BANNED. Home PC only',india:'Accepted',cap:'$400,000, confirmed',news:'Not recorded'},
  ver:{level:'partial',date:'2026-09-13',src:'F. Babar on the cap; other rules from the help centre'},
  flags:[{t:'VPS banned: the machine must be awake 18:50–23:30 IST every weekday. Costs under 4% at 97–99% uptime.'},{t:'Payout timing not confirmed in writing; 14-day cycle assumed.'}]},
-{id:'ee',firm:'Equity Edge',prod:'2-Step Legacy · $100k',size:100000,fee:500,refund:false,
+{id:'ee',firm:'Equity Edge',prod:'2-Step Legacy · $100k',size:100000,fee:500,refund:false,eaBan:true,
  daily:{pct:5,basis:'float',anchor:'prev'},floor:{pct:10,kind:'static'},eval:[{t:8,min:5},{t:5,min:5}],
  funded:{first:{kind:'afterDays',days:14},cycle:14,split:.8,min:125},
- rules:{consistency:'None on the funded account',ea:'UNANSWERED. They misread the question; follow-up open 3+ days',vps:'Permitted',india:'Accepted, UPI payments',cap:'$200,000 total, confirmed in writing (counts passed challenges awaiting contracts)',news:'Bans opening/closing within 2 min of high-impact events only'},
- ver:{level:'partial',date:'2026-09-09',src:'Equity Edge support'},
- flags:[{t:'EA on the funded account is unanswered.',c:1},{t:'Fee and targets not recorded; edit the fee. Targets assumed 8% / 5%.'},{t:'$200k allocation cap is the lowest found.'}]},
+ rules:{consistency:'None on the funded account',ea:'PROHIBITED. Asked point blank whether a self-written, fully automated EA is permitted on the challenge and the funded account: "No please, this is not permitted."',vps:'Permitted',india:'Accepted, UPI payments',cap:'$200,000 total, confirmed in writing (counts passed challenges awaiting contracts)',news:'Bans opening/closing within 2 min of high-impact events only'},
+ ver:{level:'written',date:'2026-09-13',src:'Rehoboth, Equity Edge support'},
+ flags:[{t:'FULLY AUTOMATED EAs ARE PROHIBITED. If your strategy places its own orders, this seat is unusable no matter how good the rest of the rulebook is. Everything below is recorded only because the other rules are genuinely strong.',c:1},{t:'A stop loss or take profit that TRIGGERS inside the 2-minute window around high-impact news counts as closing a trade in the restricted window, per their own wording. Confirmation requested.',c:1},{t:'Fee and targets not recorded; edit the fee. Targets assumed 8% / 5%.'},{t:'$200k allocation cap is the lowest found.'}]},
 {id:'ftp',firm:'Funded Trading Plus',prod:'Instant · $100k',size:100000,fee:1059,refund:false,
  daily:{pct:6,basis:'float',anchor:'prev'},floor:{pct:6,kind:'lock',lockAt:0},eval:[],
  funded:{first:{kind:'afterDays',days:1},cycle:7,split:.8,min:50},
@@ -403,7 +404,7 @@ function renderTable(fx){
     const dailyTxt=f.daily?`${f.daily.pct}% <span class="chip ${f.daily.basis}">${f.daily.basis==='float'?'floating':'closed'}</span>`:'none';
     const floorTxt=`${f.floor.pct}% <span class="chip ${f.floor.kind==='static'?'static':'trail'}">${f.floor.kind==='static'?'static':f.floor.kind==='lock'?'trail→lock':'trailing'}</span>`;
     const fundedTxt=f.eval.length?`${pct(r.funded)} <span class="chip">d${isNaN(r.fundedDay)?'—':r.fundedDay}</span>`:'instant';
-    tr.innerHTML=`<td class="l"><span class="firm">${f.firm}</span><span class="prod">${f.prod}</span></td>
+    tr.innerHTML=`<td class="l"><span class="firm">${f.firm}</span>${f.eaBan?'<span class="chip ban">EA banned</span>':''}<span class="prod">${f.prod}</span></td>
       <td><input class="fee" type="number" step="1" min="1" value="${r.fee}" data-id="${f.id}" aria-label="fee for ${f.firm} ${f.prod}"></td>
       <td>${dailyTxt}</td><td>${floorTxt}</td><td>${fundedTxt}</td><td>${pct(r.cash30)}</td><td>${pct(r.alive)}</td>
       <td class="${r.net<0?'neg':'pos'}">${fmt$(r.net)}</td><td class="${r.net<0?'neg':''}">${fmtI(r.netInr)}</td><td>${r.mult.toFixed(2)}×</td><td>${pct(r.zero)}</td>
